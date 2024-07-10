@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI mı Gerçek mi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+            transition: background-color 0.5s ease;
+        }
+        .question {
+            margin-bottom: 40px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .photo {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+        #overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        #overlay-text {
+            font-size: 120px;
+            color: white;
+            text-align: center;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="questions-container"></div>
+    <div id="overlay">
+        <div id="overlay-text"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                question: "İlk Fotoğrafımız , sence bu şarkıcılar gerçek mi AI mı ?",
+                image: "1.jpg",
+                correctAnswer: "A.I."
+            },
+            {
+                id: 2,
+                question: "Pekii ? Bunak Biden milli güvenlik toplantısına katılmış mıdır ?",
+                image: "2.png",
+                correctAnswer: "A.I."
+            },
+            {
+                id: 3,
+                question: "EEEE , yorum yapmıyorum . . ",
+                image: "3.jpg",
+                correctAnswer: "Not A.I."
+            },
+            {
+                id: 4,
+                question: "Mahşerin 4 atlısı, yakın çekim ",
+                image: "4.jpg",
+                correctAnswer: "Not A.I."
+            },
+            {
+                id: 5,
+                question: "Hollanda maçı, Barış Alper Yılmaz ve Van Dijk sıradan bir mücadele",
+                image: "5.png",
+                correctAnswer: "Not A.I."
+            },
+            {
+                id: 6,
+                question: "Aquaman abi ve holywoord'dan arkadaşları",
+                image: "6.jpg",
+                correctAnswer: "Not A.I."
+            },
+            {
+                id: 7,
+                question: "Bence bu biraz faaaaazla kolay bir soru oldu",
+                image: "7.png",
+                correctAnswer: "A.I."
+            },
+            {
+                id: 8,
+                question: "Siyah - Beyaz ",
+                image: "8.jpeg",
+                correctAnswer: "A.I."
+            },
+            {
+                id: 9,
+                question: "Bu soru o kadar basitki , insan mısıın testi de olabilir ?",
+                image: "9.png",
+                correctAnswer: "A.I."
+            },
+            {
+                id: 10,
+                question: "Tüm istanbulluların yaşamak istedikleri deniz kenarı evlerin banyosu ?",
+                image: "10.jpg",
+                correctAnswer: "A.I."
+            }
+        ];
+
+        function createQuestionElement(question) {
+            const div = document.createElement('div');
+            div.className = 'question';
+            div.innerHTML = `
+                <h2>${question.question}</h2>
+                <img src="${question.image}" alt="Question image" class="photo">
+                <div class="buttons">
+                    <button onclick="checkAnswer(${question.id}, 'A.I.')">A.I.</button>
+                    <button onclick="checkAnswer(${question.id}, 'Not A.I.')">Gerçek</button>
+                </div>
+            `;
+            return div;
+        }
+
+        function checkAnswer(questionId, answer) {
+            const question = questions.find(q => q.id === questionId);
+            const correct = question.correctAnswer === answer;
+            const overlay = document.getElementById('overlay');
+            const overlayText = document.getElementById('overlay-text');
+            const body = document.body;
+            const allQuestions = document.querySelectorAll('.question');
+
+            if (correct) {
+                overlayText.textContent = "DOĞRU!";
+                overlayText.style.color = "#4CAF50";
+                body.style.backgroundColor = '#4CAF50';
+                allQuestions.forEach(q => q.style.transform = 'scale(1.05)');
+                allQuestions.forEach(q => q.style.boxShadow = '0 8px 16px rgba(0,255,0,0.2)');
+                confetti({
+                    particleCount: 300,
+                    spread: 160,
+                    origin: { y: 0 }
+                });
+            } else {
+                overlayText.textContent = "YANLIŞ!";
+                overlayText.style.color = "#FF4136";
+                body.style.backgroundColor = '#FF4136';
+                allQuestions.forEach(q => q.style.animation = 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both');
+            }
+
+            overlay.classList.add('show');
+            
+            setTimeout(() => {
+                overlay.classList.remove('show');
+                body.style.backgroundColor = '#f0f0f0';
+                allQuestions.forEach(q => {
+                    q.style.transform = '';
+                    q.style.boxShadow = '';
+                    q.style.animation = '';
+                });
+            }, 2000);
+        }
+
+        const container = document.getElementById('questions-container');
+        questions.forEach(question => {
+            container.appendChild(createQuestionElement(question));
+        });
+
+        // Add floating animation to all questions
+        setInterval(() => {
+            document.querySelectorAll('.question').forEach((q, index) => {
+                setTimeout(() => {
+                    q.classList.add('float');
+                    setTimeout(() => q.classList.remove('float'), 3000);
+                }, index * 200);
+            });
+        }, 5000);
+    </script>
+
+    <!-- Load confetti library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</body>
+</html>
